@@ -7,41 +7,55 @@ import { GrFavorite } from "react-icons/gr";
 
 export default function Detail({ product, onBack }) {
   const dispatch = useDispatch();
-  if (!product) return <p>Mahsulot topilmadi</p>;
+  if (!product) return <p className="text-center text-2xl text-gray-600">Mahsulot topilmadi</p>;
 
   return (
-    <div className="max-w-[1000px] mx-auto p-4  flex flex-col justify-center">
-      <button onClick={onBack} className="rounded-md max-w-[150px] bg-red-200 mb-4 p-4">
+    <div className="max-w-[1200px] mx-auto p-8 flex flex-col justify-center">
+      <button
+        onClick={onBack}
+        className="bg-gray-800 text-white py-2 px-6 rounded-md shadow-md mb-6 hover:bg-gray-700 transition-colors"
+      >
         ⬅ Orqaga
       </button>
-      <div className=" flex shadow-lg border p-4">
-        <figure>
+      <div className="flex flex-col md:flex-row shadow-2xl rounded-xl overflow-hidden border">
+        <figure className="flex-shrink-0 w-full md:w-1/2">
           <img
             src={product.thumbnail}
             alt={product.title}
-            className=" w-[1000px] h-64 object-cover rounded-lg"
+            className="w-full h-96 object-cover"
           />
         </figure>
-        <div className="card-body ml-10">
-          <h2 className="card-title text-4xl font-bold">{product.title}</h2>
-          <p className="text-2xl mt-10 mb-2 text-gray-700">{product.description}</p>
-          <mark className="text-2xl ">{product.category}</mark>
-          <p className="text-xl font-bold mt-12 text-blue-600">${product.price}</p>
-          <div className="flex items-center mt-2 gap-1 text-yellow-500 text-sm">
-            ⭐ {product.rating} ({Math.floor(Math.random() * 1000)} ta sharh)
+        <div className="p-6 md:p-10 flex flex-col justify-between md:w-1/2">
+          <h2 className="text-4xl font-bold text-gray-800">{product.title}</h2>
+          <p className="text-lg mt-4 text-gray-600">{product.description}</p>
+          <div className="mt-4 flex items-center gap-3">
+            <mark className="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-lg">
+              {product.category}
+            </mark>
+            <p className="text-xl font-semibold text-blue-600">${product.price}</p>
           </div>
-          <div className="mt-4 flex justify-between">
+          <div className="mt-4 flex items-center gap-3 text-gray-500">
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-500 text-2xl">⭐</span>
+              <span className="text-sm font-medium">
+                {product.rating} ({Math.floor(Math.random() * 1000)} ta sharh)
+              </span>
+            </div>
+          </div>
+          <div className="mt-6 flex justify-between items-center gap-4">
             <button
               onClick={() => dispatch(addToCart(product))}
-              className="btn btn-primary flex items-center gap-2"
+              className="flex items-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-md shadow-md hover:bg-blue-700 transition-colors"
             >
-               <BiCart size={30} /> Savatchaga qo‘shish
+              <BiCart size={24} />
+              Savatchaga qo‘shish
             </button>
             <button
               onClick={() => dispatch(addToLikes(product))}
-              className="btn btn-error flex items-center gap-2"
+              className="flex items-center gap-2 bg-red-600 text-white py-3 px-6 rounded-md shadow-md hover:bg-red-700 transition-colors"
             >
-              <GrFavorite size={25} /> Sevimlilarga qo‘shish
+              <GrFavorite size={24} />
+              Sevimlilarga qo‘shish
             </button>
           </div>
         </div>
