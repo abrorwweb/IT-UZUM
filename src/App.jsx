@@ -79,13 +79,36 @@ export default function App() {
             </button>
 
             {/* Search Bar */}
-            <div className="relative">
-              <input
-                type="search"
-                placeholder="Mahsulot qidirish..."
-                className="pl-4 pr-12 py-2 w-[250px] md:w-[350px] rounded-md border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
-              />
-              <FaSearch className="absolute right-3 top-2.5 text-gray-500 text-lg" />
+            <div className="relative max-w-sm">
+              <label className="input flex items-center gap-3 py-3 px-4 border border-gray-300 rounded-xl shadow-md focus-within:ring-2 focus-within:ring-purple-400 transition-all duration-300 dark:bg-gray-800 dark:border-gray-600">
+                <svg
+                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <g
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2.5"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                  </g>
+                </svg>
+                <input
+                  type="search"
+                  className="grow bg-transparent focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 text-base"
+                  placeholder="Mahsulot qidirish..."
+                />
+                <kbd className="kbd kbd-sm bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                  ⌘
+                </kbd>
+                <kbd className="kbd kbd-sm bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                  K
+                </kbd>
+              </label>
             </div>
           </div>
 
@@ -196,74 +219,88 @@ export default function App() {
         <div className="p-4 flex flex-col items-center">
           {page === "home" && (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-                {products.slice(0, visibleCount).map((product) => (
-                  <div
-                    key={product.id}
-                    className="card p-5 bg-white rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-indigo-500/50 cursor-pointer mx-auto"
-                    onClick={() => {
-                      setSelect(product);
-                      setPage("detail");
-                    }}
-                  >
-                    <div className="relative">
-                      <img
-                        src={product.thumbnail}
-                        alt={product.title}
-                        className="h-56 w-full object-cover rounded-t-2xl transition-transform duration-300 hover:scale-110"
-                      />
-                      <span className="absolute top-4 left-4 bg-indigo-600 text-white text-xs font-bold px-4 py-2 rounded-lg">
-                        Chegirma
-                      </span>
-                    </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-7xl mx-auto px-6">
+  {products.slice(0, visibleCount).map((product) => (
+    <div
+      key={product.id}
+      onClick={() => {
+        setSelect(product);
+        setPage("detail");
+      }}
+      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden border border-gray-100"
+    >
+      <div className="relative group">
+        <img
+          src={product.thumbnail || "https://via.placeholder.com/300x200?text=NIVEA"}
+          alt={product.title}
+          className="w-full h-48 object-contain rounded-t-xl p-4"
+        />
+        {product.discountPercentage > 15 && (
+          <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-md shadow">
+            Chegirma
+          </span>
+        )}
+      </div>
 
-                    <div className="card-body space-y-3 mt-4">
-                      <h2 className="text-xl font-semibold text-gray-800 truncate">
-                        {product.title}
-                      </h2>
-                      <div className="flex items-center gap-2 text-yellow-500 text-sm">
-                        ⭐ {product.rating} ({Math.floor(Math.random() * 1000)}{" "}
-                        ta sharh)
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <p className="line-through text-gray-400">
-                          ${product.price}
-                        </p>
-                        <h3 className="text-lg font-semibold text-green-500">
-                          {product.discountPercentage}% Chegirma
-                        </h3>
-                      </div>
-                      <div className="flex justify-between items-center mt-4">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (!likes.some((item) => item.id === product.id)) {
-                              dispatch(addToLikes(product));
-                              showToast("Mahsulot layk qilindi! ❤️");
-                            }
-                          }}
-                          className="p-3 rounded-full bg-pink-500 text-white hover:bg-pink-400 transition-all duration-200"
-                        >
-                          <GrFavorite size={28} />
-                        </button>
+      <div className="p-4 flex flex-col flex-grow">
+        <h3 className="text-gray-900 font-semibold text-lg mb-1 line-clamp-2">
+          {product.brand || 'NIVEA'} {product.title}
+        </h3>
+        <p className="text-gray-500 text-sm mb-3">dezodorant sprey, qora va oq...</p>
+        
+        <div className="flex items-center mb-3">
+          <span className="text-yellow-400 text-lg mr-1">★</span>
+          <span className="font-medium text-yellow-600">4.9</span>
+          <span className="text-gray-500 text-sm ml-2">
+            (1078 sharhlar)
+          </span>
+        </div>
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (!cart.some((item) => item.id === product.id)) {
-                              dispatch(addToCart(product));
-                              showToast("Mahsulot savatchaga qo'shildi! 🛒");
-                            }
-                          }}
-                          className="p-3 rounded-full bg-blue-500 text-white hover:bg-blue-400 transition-all duration-200"
-                        >
-                          <BiCart size={30} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        <div className="mb-4">
+          <p className="text-gray-400 text-sm">265 so'm/oyiga</p>
+        </div>
+
+        <div className="flex items-baseline gap-3 mb-4">
+          <p className="text-gray-500 line-through text-sm">38 000</p>
+          <p className="text-red-600 font-bold text-xl">
+            31 990
+          </p>
+        </div>
+
+        <div className="mt-auto flex gap-3">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!likes.some((item) => item.id === product.id)) {
+                dispatch(addToLikes(product));
+                showToast("Mahsulot layk qilindi! ❤️");
+              }
+            }}
+            className="flex-1 py-2 bg-gray-100 rounded-lg text-gray-700 font-semibold hover:bg-gray-200 active:scale-95 transition-transform duration-200 flex justify-center items-center"
+            aria-label="Like"
+          >
+            <GrFavorite size={20} />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!cart.some((item) => item.id === product.id)) {
+                dispatch(addToCart(product));
+                showToast("Mahsulot savatchaga qo'shildi! 🛒");
+              }
+            }}
+            className="flex-1 py-2 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 active:scale-95 transition-transform duration-200 flex justify-center items-center"
+            aria-label="Add to cart"
+          >
+            <BiCart size={22} />
+          </button>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
 
               {visibleCount < products.length && (
                 <button
