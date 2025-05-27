@@ -55,6 +55,7 @@ export default function App() {
       theme: darkMode ? "dark" : "light",
     });
   }
+  
 
   return (
     <div>
@@ -220,85 +221,97 @@ export default function App() {
           {page === "home" && (
             <>
 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-7xl mx-auto px-6">
-  {products.slice(0, visibleCount).map((product) => (
-    <div
-      key={product.id}
-      onClick={() => {
-        setSelect(product);
-        setPage("detail");
-      }}
-      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden border border-gray-100"
-    >
-      <div className="relative group">
-        <img
-          src={product.thumbnail || "https://via.placeholder.com/300x200?text=NIVEA"}
-          alt={product.title}
-          className="w-full h-48 object-contain rounded-t-xl p-4"
-        />
-        {product.discountPercentage > 15 && (
-          <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-md shadow">
-            Chegirma
-          </span>
-        )}
-      </div>
+  {products.slice(0, visibleCount).map((product) => {
+    const originalPrice = product.price;
+    const discount = product.discountPercentage;
+    const discountedPrice = Math.round(originalPrice * (1 - discount / 100));
+    const monthlyInstallment = Math.round(discountedPrice / 12);
 
-      <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-gray-900 font-semibold text-lg mb-1 line-clamp-2">
-          {product.brand || 'NIVEA'} {product.title}
-        </h3>
-        <p className="text-gray-500 text-sm mb-3">dezodorant sprey, qora va oq...</p>
-        
-        <div className="flex items-center mb-3">
-          <span className="text-yellow-400 text-lg mr-1">★</span>
-          <span className="font-medium text-yellow-600">4.9</span>
-          <span className="text-gray-500 text-sm ml-2">
-            (1078 sharhlar)
-          </span>
+    return (
+      <div
+        key={product.id}
+        onClick={() => {
+          setSelect(product);
+          setPage("detail");
+        }}
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer flex flex-col overflow-hidden border border-gray-100"
+      >
+        <div className="relative group">
+          <img
+            src={product.thumbnail || "https://via.placeholder.com/300x200?text=NIVEA"}
+            alt={product.title}
+            className="w-full h-48 object-contain rounded-t-xl p-4"
+          />
+          {discount > 5 && (
+            <span className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md shadow animate-pulse">
+              Chegirma
+            </span>
+          )}
         </div>
 
-        <div className="mb-4">
-          <p className="text-gray-400 text-sm">265 so'm/oyiga</p>
-        </div>
+        <div className="p-4 flex flex-col flex-grow">
+          <h3 className="text-gray-900 font-semibold text-lg mb-1 line-clamp-2">
+            {product.brand || 'NIVEA'} {product.title}
+          </h3>
 
-        <div className="flex items-baseline gap-3 mb-4">
-          <p className="text-gray-500 line-through text-sm">38 000</p>
-          <p className="text-red-600 font-bold text-xl">
-            31 990
+          <p className="text-gray-500 text-sm mb-3 line-clamp-2">
+            {product.description?.slice(0, 60)}...
           </p>
-        </div>
 
-        <div className="mt-auto flex gap-3">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!likes.some((item) => item.id === product.id)) {
-                dispatch(addToLikes(product));
-                showToast("Mahsulot layk qilindi! ❤️");
-              }
-            }}
-            className="flex-1 py-2 bg-gray-100 rounded-lg text-gray-700 font-semibold hover:bg-gray-200 active:scale-95 transition-transform duration-200 flex justify-center items-center"
-            aria-label="Like"
-          >
-            <GrFavorite size={20} />
-          </button>
+          <div className="flex items-center mb-3">
+            <span className="text-yellow-400 text-lg mr-1">★</span>
+            <span className="font-medium text-yellow-600">{product.rating || 4.9}</span>
+            <span className="text-gray-500 text-sm ml-2">
+              ({product.stock || 1000} sharhlar)
+            </span>
+          </div>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!cart.some((item) => item.id === product.id)) {
-                dispatch(addToCart(product));
-                showToast("Mahsulot savatchaga qo'shildi! 🛒");
-              }
-            }}
-            className="flex-1 py-2 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 active:scale-95 transition-transform duration-200 flex justify-center items-center"
-            aria-label="Add to cart"
-          >
-            <BiCart size={22} />
-          </button>
+          <div className="mb-4">
+            <p className="text-gray-400 text-sm">{monthlyInstallment.toLocaleString()} so'm/oyiga</p>
+          </div>
+
+          <div className="flex items-baseline gap-3 mb-4">
+            <p className="text-gray-500 line-through text-sm">
+              {originalPrice.toLocaleString()} so'm
+            </p>
+            <p className="text-red-600 font-bold text-xl">
+              {discountedPrice.toLocaleString()} so'm
+            </p>
+          </div>
+
+          <div className="mt-auto flex gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!likes.some((item) => item.id === product.id)) {
+                  dispatch(addToLikes(product));
+                  showToast("Mahsulot layk qilindi! ❤️");
+                }
+              }}
+              className="animate-bounce flex-1 py-2 bg-gray-100 rounded-lg text-gray-700 font-semibold hover:bg-gray-200 active:scale-95 transition-transform duration-200 flex justify-center items-center"
+              aria-label="Like"
+            >
+              <GrFavorite size={20} />
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!cart.some((item) => item.id === product.id)) {
+                  dispatch(addToCart(product));
+                  showToast("Mahsulot savatchaga qo'shildi! 🛒");
+                }
+              }}
+              className="animate-bounce flex-1 py-2 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 active:scale-95 transition-transform duration-200 flex justify-center items-center"
+              aria-label="Add to cart"
+            >
+              <BiCart size={22} />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  ))}
+    );
+  })}
 </div>
 
 
